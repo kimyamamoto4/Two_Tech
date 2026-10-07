@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { ArrowLeft, ArrowRight, ArrowUpRight, CalendarDays, Cpu, Mail, MapPin, Monitor, Phone, ShoppingCart, Star, ShieldCheck, UserPlus, LogIn, Wrench, X } from 'lucide-react';
 
 const services = [
@@ -35,11 +35,95 @@ const reviews = [
   { quote: 'The deep clean made a huge difference. Quiet fans and temperatures dropped right away.', name: 'Kim C.', service: 'Deep cleaning' },
 ];
 
+type AuthMode = 'login' | 'register' | 'forgot';
+
+function AuthScreen({ mode, onChangeMode, onBack }: { mode: AuthMode; onChangeMode: (mode: AuthMode) => void; onBack: () => void }) {
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmitted(true);
+  };
+
+  const content = {
+    login: {
+      eyebrow: 'Welcome back',
+      title: 'Sign in to TwoTech',
+      description: 'Manage your service requests, bookings, and parts orders in one place.',
+      action: 'Sign in',
+    },
+    register: {
+      eyebrow: 'Join TwoTech',
+      title: 'Create your account',
+      description: 'Save your details and make your next repair or upgrade easier.',
+      action: 'Create account',
+    },
+    forgot: {
+      eyebrow: 'Account recovery',
+      title: 'Reset your password',
+      description: 'Enter your email and we’ll send you a secure password reset link.',
+      action: 'Send reset link',
+    },
+  }[mode];
+
+  return (
+    <div className="min-h-screen bg-[#f8f5ec] px-4 py-8">
+      <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-5xl items-center justify-center">
+        <div className="grid w-full overflow-hidden rounded-2xl border border-[#ded8c8] bg-[#fffdf7] shadow-[0_24px_70px_#6d5b1f1c] lg:grid-cols-[.85fr_1.15fr]">
+          <div className="hidden bg-ink p-10 text-white lg:flex lg:flex-col lg:justify-between">
+            <div>
+              <img src="/images/two-tech-logo.jpg" alt="TwoTech logo" className="size-14 rounded-full border-2 border-[#eab308] object-cover" />
+              <div className="mono-label mt-10 text-[#eab308]">Computer service & parts</div>
+              <h2 className="mt-3 text-4xl font-extrabold leading-none tracking-[-.06em]">Keep your setup<br /><span className="text-[#eab308]">running better.</span></h2>
+              <p className="mt-5 max-w-xs text-sm leading-6 text-[#c9c0a5]">Book repairs, follow service updates, and find the right parts with TwoTech.</p>
+            </div>
+            <div className="border-t border-white/15 pt-5 text-xs text-[#c9c0a5]">Trusted local service in Santo Tomas, Philippines.</div>
+          </div>
+
+          <div className="relative p-6 sm:p-10">
+            <button type="button" onClick={onBack} className="mb-8 inline-flex items-center gap-2 text-xs font-bold text-[#756f5b] transition hover:text-ink"><ArrowLeft size={14} /> Back to home</button>
+            <div className="lg:hidden"><div className="flex items-center gap-3"><img src="/images/two-tech-logo.jpg" alt="TwoTech logo" className="size-10 rounded-full border-2 border-[#eab308] object-cover" /><strong className="text-xl tracking-[-.06em]">TWOTECH</strong></div></div>
+            <div className="mt-8">
+              <div className="mono-label text-[#b08412]">{content.eyebrow}</div>
+              <h1 className="mt-2 text-3xl font-extrabold tracking-[-.06em] sm:text-4xl">{content.title}</h1>
+              <p className="mt-3 max-w-md text-sm leading-6 text-[#756f5b]">{content.description}</p>
+            </div>
+
+            {submitted ? (
+              <div className="mt-8 rounded-xl border border-[#b9d9b9] bg-[#eef8ed] p-5 text-sm leading-6 text-[#356437]">
+                <strong className="block text-ink">{mode === 'forgot' ? 'Check your inbox.' : 'Thanks for signing up.'}</strong>
+                {mode === 'forgot' ? 'If an account exists for that email, you will receive a reset link shortly.' : 'Your account form was submitted successfully. We’ll be ready when you are.'}
+                <button type="button" onClick={onBack} className="mt-4 font-bold underline">Return to home</button>
+              </div>
+            ) : (
+              <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
+                {mode === 'register' && <label className="block text-xs font-bold text-[#514c3e]">Full name<input required name="name" className="mt-2 w-full rounded-lg border border-[#ded8c8] bg-white p-3.5 text-sm font-normal outline-none transition focus:border-[#eab308] focus:ring-2 focus:ring-[#fde68a]" placeholder="Juan Dela Cruz" /></label>}
+                <label className="block text-xs font-bold text-[#514c3e]">Email address<input required type="email" name="email" className="mt-2 w-full rounded-lg border border-[#ded8c8] bg-white p-3.5 text-sm font-normal outline-none transition focus:border-[#eab308] focus:ring-2 focus:ring-[#fde68a]" placeholder="you@example.com" /></label>
+                {mode !== 'forgot' && <label className="block text-xs font-bold text-[#514c3e]">Password<input required minLength={8} type="password" name="password" className="mt-2 w-full rounded-lg border border-[#ded8c8] bg-white p-3.5 text-sm font-normal outline-none transition focus:border-[#eab308] focus:ring-2 focus:ring-[#fde68a]" placeholder="At least 8 characters" /></label>}
+                {mode === 'register' && <label className="block text-xs font-bold text-[#514c3e]">Confirm password<input required minLength={8} type="password" name="password_confirmation" className="mt-2 w-full rounded-lg border border-[#ded8c8] bg-white p-3.5 text-sm font-normal outline-none transition focus:border-[#eab308] focus:ring-2 focus:ring-[#fde68a]" placeholder="Repeat your password" /></label>}
+                {mode === 'login' && <div className="flex justify-end"><button type="button" onClick={() => onChangeMode('forgot')} className="text-xs font-bold text-[#a27608] hover:underline">Forgot password?</button></div>}
+                <button type="submit" className="btn-primary w-full justify-center rounded-lg py-3.5">{content.action}<ArrowUpRight size={14} /></button>
+              </form>
+            )}
+
+            {!submitted && <div className="mt-7 border-t border-[#ded8c8] pt-5 text-center text-xs text-[#756f5b]">
+              {mode === 'login' && <>Don’t have an account? <button type="button" onClick={() => onChangeMode('register')} className="font-bold text-[#a27608] hover:underline">Create one</button></>}
+              {mode === 'register' && <>Already have an account? <button type="button" onClick={() => onChangeMode('login')} className="font-bold text-[#a27608] hover:underline">Sign in</button></>}
+              {mode === 'forgot' && <>Remembered your password? <button type="button" onClick={() => onChangeMode('login')} className="font-bold text-[#a27608] hover:underline">Sign in</button></>}
+            </div>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [featuredIndex, setFeaturedIndex] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState('All parts');
   const [reviewIndex, setReviewIndex] = useState(0);
   const [accountPromptOpen, setAccountPromptOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<AuthMode | null>(null);
   const featured = featuredProof[featuredIndex];
   const visibleProducts = selectedCategory === 'All parts'
     ? products
@@ -60,6 +144,10 @@ export default function App() {
 
     return () => window.clearInterval(timer);
   }, []);
+
+  if (authMode) {
+    return <AuthScreen mode={authMode} onChangeMode={setAuthMode} onBack={() => setAuthMode(null)} />;
+  }
 
   return (
     <>
@@ -105,7 +193,7 @@ export default function App() {
         <section id="reviews" className="bg-[#fffdf7] py-24"><div className="container-page"><div className="mb-9 flex items-end justify-between"><div><div className="mono-label text-[#b08412]">From the community</div><h2 className="mt-2 text-4xl font-extrabold tracking-[-.06em]">People say it best.</h2></div><div className="flex gap-2"><button type="button" aria-label="Previous review" onClick={() => setReviewIndex((reviewIndex - 1 + reviews.length) % reviews.length)} className="grid size-9 place-items-center rounded-full border border-[#ded8c8] transition hover:bg-[#fde68a]"><ArrowLeft size={15} /></button><button type="button" aria-label="Next review" onClick={() => setReviewIndex((reviewIndex + 1) % reviews.length)} className="grid size-9 place-items-center rounded-full bg-ink text-white transition hover:bg-[#eab308] hover:text-ink"><ArrowRight size={15} /></button></div></div><div className="grid gap-4 md:grid-cols-3">{reviews.map((review, index) => <article className={`rounded-xl border border-[#e5dcc0] bg-gradient-to-br from-[#fffef9] to-[#f8f2df] p-6 transition duration-500 ${index === reviewIndex ? 'md:-translate-y-1 md:border-[#eab308] md:shadow-lg' : 'opacity-75'}`} key={review.quote}><div className="flex gap-1 text-[#c8940d]">{Array.from({ length: 5 }).map((_, star) => <Star size={13} fill="currentColor" key={star} />)}</div><blockquote className="my-5 min-h-12 text-sm leading-6 text-[#756f5b]">“{review.quote}”</blockquote><strong className="block text-xs">{review.name}</strong><span className="mt-1 block font-mono text-[9px] uppercase tracking-[.1em] text-[#b08412]">{review.service}</span></article>)}</div><div className="mt-6 flex justify-center gap-2">{reviews.map((review, index) => <button type="button" aria-label={`Show review from ${review.name}`} onClick={() => setReviewIndex(index)} className={`h-2 rounded-full transition-all ${index === reviewIndex ? 'w-6 bg-[#eab308]' : 'w-2 bg-[#ded8c8]'}`} key={review.name} />)}</div></div></section>
         <section id="contact" className="bg-[#f1ead3] py-20"><div className="container-page grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items-stretch"><div><div className="mono-label text-[#b08412]">Find our shop</div><h2 className="mt-2 text-4xl font-extrabold leading-none tracking-[-.06em]">Let’s keep your<br /><span className="text-[#d39c08]">setup running.</span></h2><p className="mt-5 max-w-sm text-[13px] leading-6 text-[#756f5b]">Visit TwoTech for computer repair, parts, deep cleaning, and custom builds.</p><div className="mt-7 space-y-4 text-xs text-[#514c3e]"><a className="flex items-start gap-3 transition hover:text-[#b08412]" href="https://maps.app.goo.gl/KLWRCZbpFzx4qBjE8" target="_blank" rel="noreferrer"><MapPin className="mt-0.5 shrink-0 text-[#b08412]" size={17} /><span><strong className="block text-ink">Purok 4, Brgy. Sta. Maria</strong>Filinvest Rd, Santo Tomas, Philippines</span></a><a className="flex items-center gap-3 transition hover:text-[#b08412]" href="tel:09633102486"><Phone className="text-[#b08412]" size={16} />0963 310 2486</a><a className="flex items-center gap-3 transition hover:text-[#b08412]" href="mailto:twotech0128@gmail.com"><Mail className="text-[#b08412]" size={16} />twotech0128@gmail.com</a></div><div className="mt-7 border-t border-[#d8cda9] pt-4 text-xs text-[#756f5b]"><strong className="block text-ink">Business hours</strong>Monday–Saturday · 9:00 AM–6:00 PM</div></div><div className="min-h-[320px] overflow-hidden rounded-2xl border border-[#d8cda9] bg-white shadow-[0_18px_40px_#6d5b1f1c]"><iframe title="TwoTech shop location map" src="https://www.google.com/maps?q=Purok%204%2C%20Brgy.%20Sta.%20Maria%2C%20Filinvest%20Rd%2C%20Santo%20Tomas%2C%20Philippines&output=embed" className="h-full min-h-[320px] w-full border-0" loading="lazy" allowFullScreen /></div></div></section>
       </main>
-      {accountPromptOpen && <div className="fixed inset-0 z-50 grid place-items-center bg-[#24241fcc] p-4" role="dialog" aria-modal="true" aria-labelledby="booking-account-title"><div className="relative w-full max-w-lg rounded-2xl bg-[#fffdf7] p-6 shadow-2xl md:p-8"><button type="button" aria-label="Close booking options" className="absolute right-4 top-4 grid size-8 place-items-center rounded-full text-[#756f5b] transition hover:bg-[#fde68a] hover:text-ink" onClick={() => setAccountPromptOpen(false)}><X size={17} /></button><div className="mono-label text-[#b08412]">Book your service</div><h2 id="booking-account-title" className="mt-2 max-w-sm text-3xl font-extrabold leading-tight tracking-[-.05em]">How would you like to continue?</h2><p className="mt-3 max-w-md text-xs leading-5 text-[#756f5b]">Create an account to track appointments and receive updates, or log in if you already have a TwoTech account.</p><div className="mt-6 grid gap-3 sm:grid-cols-2"><button type="button" className="group rounded-xl border border-[#ded8c8] bg-[#fdfbf5] p-4 text-left transition hover:-translate-y-0.5 hover:border-[#eab308] hover:shadow-lg" onClick={() => window.location.href = '/register'}><span className="grid size-10 place-items-center rounded-full bg-[#fde68a] text-ink transition group-hover:bg-[#eab308]"><UserPlus size={18} /></span><strong className="mt-3 block text-sm">Create an account</strong><span className="mt-1 block text-[11px] leading-4 text-[#756f5b]">Save your details and manage bookings easily.</span></button><button type="button" className="group rounded-xl border border-[#ded8c8] bg-[#fdfbf5] p-4 text-left transition hover:-translate-y-0.5 hover:border-[#eab308] hover:shadow-lg" onClick={() => window.location.href = '/login'}><span className="grid size-10 place-items-center rounded-full bg-ink text-white transition group-hover:bg-[#eab308] group-hover:text-ink"><LogIn size={18} /></span><strong className="mt-3 block text-sm">Log in</strong><span className="mt-1 block text-[11px] leading-4 text-[#756f5b]">Continue with your existing TwoTech account.</span></button></div></div></div>}
+      {accountPromptOpen && <div className="fixed inset-0 z-50 grid place-items-center bg-[#24241fcc] p-4" role="dialog" aria-modal="true" aria-labelledby="booking-account-title"><div className="relative w-full max-w-lg rounded-2xl bg-[#fffdf7] p-6 shadow-2xl md:p-8"><button type="button" aria-label="Close booking options" className="absolute right-4 top-4 grid size-8 place-items-center rounded-full text-[#756f5b] transition hover:bg-[#fde68a] hover:text-ink" onClick={() => setAccountPromptOpen(false)}><X size={17} /></button><div className="mono-label text-[#b08412]">Book your service</div><h2 id="booking-account-title" className="mt-2 max-w-sm text-3xl font-extrabold leading-tight tracking-[-.05em]">How would you like to continue?</h2><p className="mt-3 max-w-md text-xs leading-5 text-[#756f5b]">Create an account to track appointments and receive updates, or log in if you already have a TwoTech account.</p><div className="mt-6 grid gap-3 sm:grid-cols-2"><button type="button" className="group rounded-xl border border-[#ded8c8] bg-[#fdfbf5] p-4 text-left transition hover:-translate-y-0.5 hover:border-[#eab308] hover:shadow-lg" onClick={() => { setAccountPromptOpen(false); setAuthMode('register'); }}><span className="grid size-10 place-items-center rounded-full bg-[#fde68a] text-ink transition group-hover:bg-[#eab308]"><UserPlus size={18} /></span><strong className="mt-3 block text-sm">Create an account</strong><span className="mt-1 block text-[11px] leading-4 text-[#756f5b]">Save your details and manage bookings easily.</span></button><button type="button" className="group rounded-xl border border-[#ded8c8] bg-[#fdfbf5] p-4 text-left transition hover:-translate-y-0.5 hover:border-[#eab308] hover:shadow-lg" onClick={() => { setAccountPromptOpen(false); setAuthMode('login'); }}><span className="grid size-10 place-items-center rounded-full bg-ink text-white transition group-hover:bg-[#eab308] group-hover:text-ink"><LogIn size={18} /></span><strong className="mt-3 block text-sm">Log in</strong><span className="mt-1 block text-[11px] leading-4 text-[#756f5b]">Continue with your existing TwoTech account.</span></button></div></div></div>}
       <footer className="bg-ink py-10 text-[#f5eedb]"><div className="container-page flex flex-col justify-between gap-8 md:flex-row"><div><div className="flex items-center gap-3 text-xl font-extrabold"><img src="/images/two-tech-logo.jpg" alt="TwoTech logo" className="size-10 rounded-full border border-[#e4bd2b] object-cover" /> <span>twotech</span></div><p className="mt-4 max-w-xs text-xs leading-6 text-[#c9c0a5]">Computer service, parts, and builds for people who want their tech to work better.</p></div><div><div className="mono-label text-[#c9b978]">Visit us</div><p className="mt-3 text-xs leading-6">Purok 4, Brgy. Sta. Maria<br />0963 310 2486<br />twotech0128@gmail.com</p></div></div></footer>
     </>
   );
