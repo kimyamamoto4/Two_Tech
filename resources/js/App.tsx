@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { ArrowLeft, ArrowRight, ArrowUpRight, CalendarDays, Cpu, Mail, MapPin, Monitor, Phone, ShoppingCart, Star, ShieldCheck, UserPlus, LogIn, Wrench, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, CalendarDays, Check, Cpu, Eye, EyeOff, Headphones, LockKeyhole, Mail, MapPin, Monitor, Phone, ShoppingCart, Star, ShieldCheck, UserPlus, LogIn, Wrench, X, Zap } from 'lucide-react';
 
 const services = [
   { icon: Wrench, title: 'Computer troubleshooting', text: 'Diagnose hardware and software problems with clear, dependable repairs.', price: 'From ₱500' },
@@ -39,6 +39,7 @@ type AuthMode = 'login' | 'register' | 'forgot';
 
 function AuthScreen({ mode, onChangeMode, onBack }: { mode: AuthMode; onChangeMode: (mode: AuthMode) => void; onBack: () => void }) {
   const [submitted, setSubmitted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -47,70 +48,62 @@ function AuthScreen({ mode, onChangeMode, onBack }: { mode: AuthMode; onChangeMo
 
   const content = {
     login: {
-      eyebrow: 'Welcome back',
-      title: 'Sign in to TwoTech',
-      description: 'Manage your service requests, bookings, and parts orders in one place.',
-      action: 'Sign in',
+      title: 'Welcome Back!',
+      description: 'Log in to your account to continue\nand manage your services.',
+      action: 'Log In',
     },
     register: {
-      eyebrow: 'Join TwoTech',
-      title: 'Create your account',
-      description: 'Save your details and make your next repair or upgrade easier.',
-      action: 'Create account',
+      title: 'Create Account',
+      description: 'Sign up to book services and manage\nyour PC with ease.',
+      action: 'Create Account',
     },
     forgot: {
-      eyebrow: 'Account recovery',
-      title: 'Reset your password',
-      description: 'Enter your email and we’ll send you a secure password reset link.',
-      action: 'Send reset link',
+      title: 'Forgot Password?',
+      description: 'Enter your email and we’ll send you a\nlink to reset your password.',
+      action: 'Send Reset Link',
     },
   }[mode];
 
+  const features = [
+    { icon: ShieldCheck, title: 'PC Repair', text: 'Fixing issues,\nrestoring performance' },
+    { icon: Cpu, title: 'Maintenance', text: 'Keep your system\nrunning smoothly' },
+    { icon: Zap, title: 'Upgrades', text: 'Better speed,\nmore power' },
+    { icon: Headphones, title: 'Technical Support', text: 'Quick help,\nwhenever you need it' },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#f8f5ec] px-4 py-8">
-      <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-5xl items-center justify-center">
-        <div className="grid w-full overflow-hidden rounded-2xl border border-[#ded8c8] bg-[#fffdf7] shadow-[0_24px_70px_#6d5b1f1c] lg:grid-cols-[.85fr_1.15fr]">
-          <div className="hidden bg-ink p-10 text-white lg:flex lg:flex-col lg:justify-between">
-            <div>
-              <img src="/images/two-tech-logo.jpg" alt="TwoTech logo" className="size-14 rounded-full border-2 border-[#eab308] object-cover" />
-              <div className="mono-label mt-10 text-[#eab308]">Computer service & parts</div>
-              <h2 className="mt-3 text-4xl font-extrabold leading-none tracking-[-.06em]">Keep your setup<br /><span className="text-[#eab308]">running better.</span></h2>
-              <p className="mt-5 max-w-xs text-sm leading-6 text-[#c9c0a5]">Book repairs, follow service updates, and find the right parts with TwoTech.</p>
+    <div className="auth-page min-h-screen px-4 py-8 sm:px-8 lg:px-12">
+      <div className="auth-orb auth-orb-top" /><div className="auth-orb auth-orb-bottom" />
+      <div className="auth-shell mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-[920px] items-center justify-center">
+        <div className="auth-card grid w-full overflow-hidden rounded-[9px] bg-white shadow-[0_18px_55px_rgba(33,67,118,.13)] md:grid-cols-[1.06fr_.94fr]">
+          <div className="auth-visual relative hidden min-h-[560px] overflow-hidden text-white md:flex md:flex-col md:justify-between">
+            <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1100&q=90" alt="PC technician working at a computer" className="absolute inset-0 h-full w-full object-cover object-center [filter:sepia(.45)_saturate(1.15)_brightness(.82)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(36,36,31,.86)_0%,rgba(36,36,31,.3)_47%,rgba(36,36,31,.95)_100%)]" />
+            <div className="relative z-10 p-10">
+              <div className="flex items-center gap-3"><Monitor className="text-[#eab308]" size={38} strokeWidth={2.1} /><div><div className="text-[27px] font-extrabold leading-none tracking-[-.06em]">PC <span className="text-white">Services</span></div><div className="mt-1 text-[10px] tracking-wide text-[#d8d2bd]">Fast. Reliable. Professional.</div></div></div>
+              <h2 className="mt-12 text-[37px] font-extrabold leading-[1.03] tracking-[-.055em]">Your PC,<br /><span className="text-[#eab308]">Our Priority</span></h2>
+              <p className="mt-4 max-w-[260px] text-[13px] leading-5 text-[#e7e1cf]">We provide expert PC repair, maintenance, and technical support to keep you connected and productive.</p>
             </div>
-            <div className="border-t border-white/15 pt-5 text-xs text-[#c9c0a5]">Trusted local service in Santo Tomas, Philippines.</div>
+            <div className="relative z-10 grid grid-cols-4 gap-2 px-8 pb-9 text-center">{features.map(({ icon: Icon, title, text }) => <div key={title}><div className="mx-auto grid size-9 place-items-center rounded-lg border border-white/65 bg-black/35 text-white"><Icon size={19} /></div><strong className="mt-2 block text-[10px] text-white">{title}</strong><span className="mt-1 block whitespace-pre-line text-[8px] leading-3 text-white/75">{text}</span></div>)}</div>
           </div>
 
-          <div className="relative p-6 sm:p-10">
-            <button type="button" onClick={onBack} className="mb-8 inline-flex items-center gap-2 text-xs font-bold text-[#756f5b] transition hover:text-ink"><ArrowLeft size={14} /> Back to home</button>
-            <div className="lg:hidden"><div className="flex items-center gap-3"><img src="/images/two-tech-logo.jpg" alt="TwoTech logo" className="size-10 rounded-full border-2 border-[#eab308] object-cover" /><strong className="text-xl tracking-[-.06em]">TWOTECH</strong></div></div>
-            <div className="mt-8">
-              <div className="mono-label text-[#b08412]">{content.eyebrow}</div>
-              <h1 className="mt-2 text-3xl font-extrabold tracking-[-.06em] sm:text-4xl">{content.title}</h1>
-              <p className="mt-3 max-w-md text-sm leading-6 text-[#756f5b]">{content.description}</p>
-            </div>
+          <div className="relative bg-white px-7 py-8 sm:px-12 sm:py-11">
+            <button type="button" onClick={onBack} className="absolute right-7 top-6 text-xs font-semibold text-[#77849d] transition hover:text-[#1d2a42]">Back to home</button>
+            <div className="flex items-center gap-3 md:hidden"><Monitor className="text-[#c8940d]" size={30} /><strong className="text-2xl tracking-[-.06em] text-ink">PC <span className="text-[#c8940d]">Services</span></strong></div>
+            <div className="mt-12 sm:mt-7"><h1 className="text-[25px] font-extrabold tracking-[-.04em] text-ink sm:text-[27px]">{content.title}</h1><p className="mt-2 whitespace-pre-line text-[12px] leading-5 text-[#756f5b]">{content.description}</p></div>
 
-            {submitted ? (
-              <div className="mt-8 rounded-xl border border-[#b9d9b9] bg-[#eef8ed] p-5 text-sm leading-6 text-[#356437]">
-                <strong className="block text-ink">{mode === 'forgot' ? 'Check your inbox.' : 'Thanks for signing up.'}</strong>
-                {mode === 'forgot' ? 'If an account exists for that email, you will receive a reset link shortly.' : 'Your account form was submitted successfully. We’ll be ready when you are.'}
-                <button type="button" onClick={onBack} className="mt-4 font-bold underline">Return to home</button>
-              </div>
-            ) : (
-              <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
-                {mode === 'register' && <label className="block text-xs font-bold text-[#514c3e]">Full name<input required name="name" className="mt-2 w-full rounded-lg border border-[#ded8c8] bg-white p-3.5 text-sm font-normal outline-none transition focus:border-[#eab308] focus:ring-2 focus:ring-[#fde68a]" placeholder="Juan Dela Cruz" /></label>}
-                <label className="block text-xs font-bold text-[#514c3e]">Email address<input required type="email" name="email" className="mt-2 w-full rounded-lg border border-[#ded8c8] bg-white p-3.5 text-sm font-normal outline-none transition focus:border-[#eab308] focus:ring-2 focus:ring-[#fde68a]" placeholder="you@example.com" /></label>
-                {mode !== 'forgot' && <label className="block text-xs font-bold text-[#514c3e]">Password<input required minLength={8} type="password" name="password" className="mt-2 w-full rounded-lg border border-[#ded8c8] bg-white p-3.5 text-sm font-normal outline-none transition focus:border-[#eab308] focus:ring-2 focus:ring-[#fde68a]" placeholder="At least 8 characters" /></label>}
-                {mode === 'register' && <label className="block text-xs font-bold text-[#514c3e]">Confirm password<input required minLength={8} type="password" name="password_confirmation" className="mt-2 w-full rounded-lg border border-[#ded8c8] bg-white p-3.5 text-sm font-normal outline-none transition focus:border-[#eab308] focus:ring-2 focus:ring-[#fde68a]" placeholder="Repeat your password" /></label>}
-                {mode === 'login' && <div className="flex justify-end"><button type="button" onClick={() => onChangeMode('forgot')} className="text-xs font-bold text-[#a27608] hover:underline">Forgot password?</button></div>}
-                <button type="submit" className="btn-primary w-full justify-center rounded-lg py-3.5">{content.action}<ArrowUpRight size={14} /></button>
-              </form>
-            )}
+            {submitted ? <div className="mt-8 rounded-lg border border-[#b8dbca] bg-[#effaf3] p-5 text-sm leading-6 text-[#39714e]"><strong className="block text-[#183c2a]">{mode === 'forgot' ? 'Check your inbox.' : 'Thanks for signing up.'}</strong>{mode === 'forgot' ? 'If an account exists for that email, you will receive a reset link shortly.' : 'Your account form was submitted successfully. We’ll be ready when you are.'}<button type="button" onClick={onBack} className="mt-4 block font-bold underline">Return to home</button></div> : <form className="mt-7 space-y-4" onSubmit={handleSubmit}>
+              {mode === 'register' && <label className="auth-field-label">Full Name<div className="auth-input-wrap"><UserPlus size={17} /><input required name="name" placeholder="Enter your full name" /></div></label>}
+              {mode === 'register' && <label className="auth-field-label">Contact Number<div className="auth-input-wrap"><Phone size={17} /><input required type="tel" name="contact" placeholder="Enter your contact number" /></div></label>}
+              <label className="auth-field-label">Email Address<div className="auth-input-wrap"><Mail size={17} /><input required type="email" name="email" placeholder="Enter your email address" /></div></label>
+              {mode !== 'forgot' && <label className="auth-field-label">Password<div className="auth-input-wrap"><LockKeyhole size={17} /><input required minLength={8} type={showPassword ? 'text' : 'password'} name="password" placeholder="Enter your password" /><button type="button" aria-label={showPassword ? 'Hide password' : 'Show password'} onClick={() => setShowPassword(!showPassword)}>{showPassword ? <EyeOff size={16} /> : <Eye size={16} />}</button></div></label>}
+              {mode === 'register' && <label className="auth-field-label">Confirm Password<div className="auth-input-wrap"><LockKeyhole size={17} /><input required minLength={8} type="password" name="password_confirmation" placeholder="Confirm your password" /></div></label>}
+              {mode === 'login' && <div className="flex items-center justify-between text-[10px] text-[#53617a]"><label className="flex items-center gap-2"><input type="checkbox" className="auth-checkbox" /> Remember me</label><button type="button" onClick={() => onChangeMode('forgot')} className="font-semibold text-[#2388f4] hover:underline">Forgot password?</button></div>}
+              <button type="submit" className="auth-submit w-full">{content.action}<ArrowRight size={16} /></button>
+            </form>}
 
-            {!submitted && <div className="mt-7 border-t border-[#ded8c8] pt-5 text-center text-xs text-[#756f5b]">
-              {mode === 'login' && <>Don’t have an account? <button type="button" onClick={() => onChangeMode('register')} className="font-bold text-[#a27608] hover:underline">Create one</button></>}
-              {mode === 'register' && <>Already have an account? <button type="button" onClick={() => onChangeMode('login')} className="font-bold text-[#a27608] hover:underline">Sign in</button></>}
-              {mode === 'forgot' && <>Remembered your password? <button type="button" onClick={() => onChangeMode('login')} className="font-bold text-[#a27608] hover:underline">Sign in</button></>}
-            </div>}
+            {!submitted && <div className="mt-6 text-center text-[10px] text-[#8a96aa]">{mode === 'login' && <>Don't have an account? <button type="button" onClick={() => onChangeMode('register')} className="font-semibold text-[#2388f4] hover:underline">Create an account</button></>}{mode === 'register' && <>Already have an account? <button type="button" onClick={() => onChangeMode('login')} className="font-semibold text-[#2388f4] hover:underline">Log in</button></>}{mode === 'forgot' && <>Remembered your password? <button type="button" onClick={() => onChangeMode('login')} className="font-semibold text-[#2388f4] hover:underline">Log in</button></>}</div>}
+            {mode === 'login' && <div className="mt-5 flex items-center justify-center gap-1 text-[9px] text-[#94a0b1]"><Check size={12} className="text-[#2388f4]" /> Secure and reliable service</div>}
           </div>
         </div>
       </div>
